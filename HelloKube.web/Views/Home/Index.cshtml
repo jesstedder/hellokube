@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@section Scripts{
+    <script src="/lib/signalr/signalr.js"></script>
+    <script type="text/javascript">
+        // Bind DOM elements
+        var messagesList = document.getElementById("messages-list");
+
+        function appendMessage(content) {
+            var li = document.createElement("li");
+            li.innerText = content;
+            messagesList.appendChild(li);
+        }
+
+        var connection = new signalR.HubConnection("/hubs/notification");
+
+        connection.on("SendMessage", function (message) {
+            appendMessage(message);
+        });
+
+        connection.on("SendAction", function (sender, action) {
+            appendMessage(sender + ' ' + action);
+        });
+
+        connection.start().then(function() {
+        });
+    </script>
+}
+<div class="row">
+    <div class="col-md-3">
+        <h2>Server response:</h2>
+        <div class="well" id="server-response">
+            <ul id="messages-list"></ul>
+        </div>
+    </div>
+</div>
+
+
+
