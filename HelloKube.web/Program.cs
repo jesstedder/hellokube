@@ -19,6 +19,13 @@ namespace HelloKube
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+            .ConfigureAppConfiguration((builderContext, config) =>
+            {
+                IHostingEnvironment env = builderContext.HostingEnvironment;
+
+                config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile($"config/externalsettings.json", optional: false, reloadOnChange: true);
+            })
+            .UseStartup<Startup>();
     }
 }

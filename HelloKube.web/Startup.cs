@@ -92,13 +92,13 @@ namespace HelloKube
 
             _bus = Bus.Factory.CreateUsingRabbitMq(sbc =>
             {
-                var host = sbc.Host(new Uri("rabbitmq://localhost/"), h =>
+                var host = sbc.Host(new Uri(Configuration["RabbitMQ:Uri"]), h =>
                 {
-                    h.Username("user");
-                    h.Password("bitnami");
+                    h.Username(Configuration["RabbitMQ:UserName"]);
+                    h.Password(Configuration["RabbitMQ:Password"]);
                 });
 
-                sbc.ReceiveEndpoint(host, "hello-kube-web", endpoint =>
+                sbc.ReceiveEndpoint(host, Configuration["RabbitMQ:EndpointQueue"], endpoint =>
                     {
                         
                         endpoint.Consumer<HelloKube.Hubs.ServerTimeConsumer>();
