@@ -14,27 +14,28 @@ namespace HelloKube.service
         private static IBusControl _bus;
         static void Main(string[] args)
         {
+            Console.WriteLine("Starting hellokube.service");
+                var builder = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: true)
+            .AddJsonFile("config/externalsettings.json", optional: false);
+
+                var Configuration = builder.Build();
+                Console.WriteLine($"Connecting to: {Configuration["RabbitMQ:Uri"]}");
             // Fire and forget
             Task.Run(() =>
             {
-                var builder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional:true)
-            .AddJsonFile("config/externalsettings.json", optional:false);
 
-            var Configuration = builder.Build();
-            Console.WriteLine($"Connecting to: {Configuration["RabbitMQ:Uri"]}");
-        
-            _bus = Bus.Factory.CreateUsingRabbitMq(sbc =>
-            {
-                var host = sbc.Host(new Uri(Configuration["RabbitMQ:Uri"]), h =>
+                _bus = Bus.Factory.CreateUsingRabbitMq(sbc =>
                 {
-                    h.Username(Configuration["RabbitMQ:UserName"]);
-                    h.Password(Configuration["RabbitMQ:Password"]);
+                    var host = sbc.Host(new Uri(Configuration["RabbitMQ:Uri"]), h =>
+                    {
+                        h.Username(Configuration["RabbitMQ:UserName"]);
+                        h.Password(Configuration["RabbitMQ:Password"]);
+                    });
+
                 });
 
-            });
-                
                 var random = new Random(10);
                 _bus.Start();
 
@@ -44,7 +45,8 @@ namespace HelloKube.service
                     // In this sample we are just writing a random number to the Console (stdout)
                     var nxt = random.Next();
                     Console.WriteLine($"Loop = {nxt}");
-                    _bus.Publish<HelloKube.core.models.ServerTimeMessage>(new core.models.ServerTimeMessage(){
+                    _bus.Publish<HelloKube.core.models.ServerTimeMessage>(new core.models.ServerTimeMessage()
+                    {
                         ServerTime = DateTime.Now,
                         ExtraDetails = nxt.ToString()
                     });
