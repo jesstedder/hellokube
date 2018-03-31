@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hello-kube-config
+  namespace: hello-kube
+data:
+  externalsettings.json: "{\r\n    \"RabbitMQ\":{\r\n    \"Uri\":\"rabbitmq://hello-kube-rabbitmq-lb.hello-kube.svc.cluster.local\",\r\n
+    \   \"UserName\":\"user\",\r\n    \"Password\":\"bitnami\",\r\n    \"EndpointQueue\":\"hello-kube-web\"\r\n
+    \ }\r\n}"
+
+    #hello-kube-rabbitmq-rabbitmq.hello-kube.svc.cluster.local
+    #helm install --name hello-kube-rabbitmq --namespace hello-kube --set rabbitmqPassword=Passw0rd stable/rabbitmq
+---
+apiVersion: apps/v1beta1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: hello-kube-service-deployment
+  namespace: hello-kube
+spec:
+  selector:
+    matchLabels:
+      app: hello-kube-service
+  template: # create pods using pod definition in this template
+    metadata:
+      # unlike pod-nginx.yaml, the name is not included in the meta data as a unique name is
+      # generated from the deployment name
+      labels:
+        app: hello-kube-service
+    spec:
+      containers:
+        - name: hello-kube-service-console
+          image: snpcontainers2.azurecr.io/hello-kube-service:latest
+          volumeMounts:
+          - name: config-volume
+            mountPath: /config
+      volumes:
+        - name: config-volume
+          configMap:
+            # Provide the name of the ConfigMap containing the files you want
+            # to add to the container
+            name: hello-kube-config

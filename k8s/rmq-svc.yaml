@@ -1,0 +1,41 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: firstmq-rabbitmq
+  namespace: rmq
+  selfLink: "/api/v1/namespaces/rmq/services/firstmq-rabbitmq"
+  uid: 6092c21c-34d8-11e8-b023-0a58ac1f0d39
+  resourceVersion: '1085628'
+  creationTimestamp: '2018-03-31T11:40:57Z'
+  labels:
+    app: firstmq-rabbitmq
+    chart: rabbitmq-0.6.17
+    heritage: Tiller
+    release: firstmq
+spec:
+  ports:
+  - name: epmd
+    protocol: TCP
+    port: 4369
+    targetPort: epmd
+  - name: amqp
+    protocol: TCP
+    port: 5672
+    targetPort: amqp
+  - name: dist
+    protocol: TCP
+    port: 25672
+    targetPort: dist
+  - name: stats
+    protocol: TCP
+    port: 15672
+    targetPort: stats
+  selector:
+    app: firstmq-rabbitmq
+  clusterIP: 10.0.54.11
+  type: ClusterIP
+  sessionAffinity: None
+status:
+  loadBalancer: {}
+#firstmq-rabbitmq.rmq.svc.cluster.local

@@ -1,0 +1,152 @@
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: firstmq-rabbitmq-6cbd44b774-blnt8
+  generateName: firstmq-rabbitmq-6cbd44b774-
+  namespace: rmq
+  selfLink: "/api/v1/namespaces/rmq/pods/firstmq-rabbitmq-6cbd44b774-blnt8"
+  uid: 61318ade-34d8-11e8-b023-0a58ac1f0d39
+  resourceVersion: '1085908'
+  creationTimestamp: '2018-03-31T11:40:58Z'
+  labels:
+    app: firstmq-rabbitmq
+    pod-template-hash: '2768006330'
+  ownerReferences:
+  - apiVersion: extensions/v1beta1
+    kind: ReplicaSet
+    name: firstmq-rabbitmq-6cbd44b774
+    uid: 6095ac31-34d8-11e8-b023-0a58ac1f0d39
+    controller: true
+    blockOwnerDeletion: true
+spec:
+  volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: firstmq-rabbitmq
+  - name: default-token-gvw2p
+    secret:
+      secretName: default-token-gvw2p
+      defaultMode: 420
+  containers:
+  - name: firstmq-rabbitmq
+    image: bitnami/rabbitmq:3.7.2-r1
+    ports:
+    - name: epmd
+      containerPort: 4369
+      protocol: TCP
+    - name: amqp
+      containerPort: 5672
+      protocol: TCP
+    - name: dist
+      containerPort: 25672
+      protocol: TCP
+    - name: stats
+      containerPort: 15672
+      protocol: TCP
+    env:
+    - name: RABBITMQ_USERNAME
+      value: user
+    - name: RABBITMQ_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: firstmq-rabbitmq
+          key: rabbitmq-password
+    - name: RABBITMQ_ERL_COOKIE
+      valueFrom:
+        secretKeyRef:
+          name: firstmq-rabbitmq
+          key: rabbitmq-erlang-cookie
+    - name: RABBITMQ_NODE_PORT_NUMBER
+      value: '5672'
+    - name: RABBITMQ_NODE_TYPE
+      value: stats
+    - name: RABBITMQ_NODE_NAME
+      value: rabbit@localhost
+    - name: RABBITMQ_CLUSTER_NODE_NAME
+    - name: RABBITMQ_VHOST
+      value: "/"
+    - name: RABBITMQ_MANAGER_PORT_NUMBER
+      value: '15672'
+    - name: RABBITMQ_DISK_FREE_LIMIT
+      value: '"6GiB"'
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+    volumeMounts:
+    - name: data
+      mountPath: "/bitnami/rabbitmq"
+    - name: default-token-gvw2p
+      readOnly: true
+      mountPath: "/var/run/secrets/kubernetes.io/serviceaccount"
+    livenessProbe:
+      exec:
+        command:
+        - rabbitmqctl
+        - status
+      initialDelaySeconds: 120
+      timeoutSeconds: 5
+      periodSeconds: 10
+      successThreshold: 1
+      failureThreshold: 6
+    readinessProbe:
+      exec:
+        command:
+        - rabbitmqctl
+        - status
+      initialDelaySeconds: 10
+      timeoutSeconds: 3
+      periodSeconds: 5
+      successThreshold: 1
+      failureThreshold: 3
+    terminationMessagePath: "/dev/termination-log"
+    terminationMessagePolicy: File
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Always
+  terminationGracePeriodSeconds: 30
+  dnsPolicy: ClusterFirst
+  serviceAccountName: default
+  serviceAccount: default
+  nodeName: aks-nodepool1-18032415-4
+  securityContext: {}
+  schedulerName: default-scheduler
+  tolerations:
+  - key: node.kubernetes.io/not-ready
+    operator: Exists
+    effect: NoExecute
+    tolerationSeconds: 300
+  - key: node.kubernetes.io/unreachable
+    operator: Exists
+    effect: NoExecute
+    tolerationSeconds: 300
+status:
+  phase: Running
+  conditions:
+  - type: Initialized
+    status: 'True'
+    lastProbeTime: 
+    lastTransitionTime: '2018-03-31T11:42:01Z'
+  - type: Ready
+    status: 'True'
+    lastProbeTime: 
+    lastTransitionTime: '2018-03-31T11:43:12Z'
+  - type: PodScheduled
+    status: 'True'
+    lastProbeTime: 
+    lastTransitionTime: '2018-03-31T11:42:01Z'
+  hostIP: 10.240.0.8
+  podIP: 10.244.4.14
+  startTime: '2018-03-31T11:42:01Z'
+  containerStatuses:
+  - name: firstmq-rabbitmq
+    state:
+      running:
+        startedAt: '2018-03-31T11:42:48Z'
+    lastState: {}
+    ready: true
+    restartCount: 0
+    image: bitnami/rabbitmq:3.7.2-r1
+    imageID: docker-pullable://bitnami/rabbitmq@sha256:396f17fefa0d4012463d063ce258b15b78aa54386667df30aafddb31e69e1925
+    containerID: docker://758850500fff6d2ce85f98d11e2077082f0ac059074a854bc6e61809e43edd56
+  qosClass: Burstable
