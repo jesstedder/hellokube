@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+//dotnet install tool dotnet-dev-certs -g --version 2.1.0-preview1-final' and then run 'dotnet-dev-certs https --trust'.
 
 namespace HelloKube
 {
@@ -50,7 +51,6 @@ namespace HelloKube
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             var x = services.AddSignalR();
-
             //var provider = services.BuildServiceProvider();
 
             

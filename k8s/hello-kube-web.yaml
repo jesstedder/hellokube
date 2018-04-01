@@ -1,0 +1,23 @@
+---
+---
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: hello-kube-web-ingress-k8s
+  namespace: hello-kube
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: 'true'
+spec:
+  tls:
+  - hosts:
+    - hello-kube.k8s.snp.fhlbc.in
+    secretName: hello-kube-web-k8s-tls-cert2
+  rules:
+  - host: hello-kube.k8s.snp.fhlbc.in
+    http:
+      paths:
+      - path: "/"
+        backend:
+          serviceName: hello-kube-web-lb
+          servicePort: 80
