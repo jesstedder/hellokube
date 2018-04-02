@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
+using Hangfire;
 
 namespace HelloKube.service
 {
@@ -11,17 +12,22 @@ namespace HelloKube.service
     {
         // AutoResetEvent to signal when to exit the application.
         private static readonly AutoResetEvent waitHandle = new AutoResetEvent(false);
-        private static IBusControl _bus;
+        public static IBusControl _bus;
+        //private static BackgroundJobServer _jobServer;
         static void Main(string[] args)
         {
-            Console.WriteLine("Starting hellokube.service");
-                var builder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: true)
-            .AddJsonFile("config/externalsettings.json", optional: false);
 
-                var Configuration = builder.Build();
-                Console.WriteLine($"Connecting to: {Configuration["RabbitMQ:Uri"]}");
+            Console.WriteLine("Starting hellokube.service");
+            var builder = new ConfigurationBuilder()
+        .SetBasePath(Directory.GetCurrentDirectory())
+        .AddJsonFile("appsettings.json", optional: true)
+        .AddJsonFile("config/externalsettings.json", optional: false);
+
+            var Configuration = builder.Build();
+            Console.WriteLine($"Connecting to: {Configuration["RabbitMQ:Uri"]}");
+                GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration["SqlServer:ConnectionString"]);
+            BackgroundJobServer _jobServer = new BackgroundJobServer();
+            
             // Fire and forget
             Task.Run(() =>
             {
@@ -36,24 +42,15 @@ namespace HelloKube.service
 
                 });
 
-                var random = new Random(10);
                 _bus.Start();
 
-                while (true)
-                {
-                    // Write here whatever your side car applications needs to do.
-                    // In this sample we are just writing a random number to the Console (stdout)
-                    var nxt = random.Next();
-                    Console.WriteLine($"Loop = {nxt}");
-                    _bus.Publish<HelloKube.core.models.ServerTimeMessage>(new core.models.ServerTimeMessage()
-                    {
-                        ServerTime = DateTime.Now,
-                        ExtraDetails = nxt.ToString()
-                    });
+                jobs.ServerTimeJob stj = new jobs.ServerTimeJob();
+                RecurringJob.AddOrUpdate("rmq-sample-job", () => stj.Execute(), Cron.Minutely, TimeZoneInfo.Local);
+                //_jobServer = new BackgroundJobServer();
 
-                    // Sleep as long as you need.
-                    Thread.Sleep(5000);
-                }
+                
+
+
             });
 
             // Handle Control+C or Control+Break
@@ -61,6 +58,8 @@ namespace HelloKube.service
             {
                 Console.WriteLine("Exit");
                 _bus.Stop();
+                _jobServer.Dispose();
+
 
                 // Allow the manin thread to continue and exit...
                 waitHandle.Set();

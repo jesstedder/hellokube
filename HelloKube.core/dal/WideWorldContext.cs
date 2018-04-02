@@ -41,11 +41,21 @@ namespace HelloKube.core.dal
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer(Configuration["SqlServer:ConnectionString"]);
-            }
         }
+
+        public WideWorldContext(DbContextOptions<WideWorldContext> options) : base(options){}
+
+        public static WideWorldContext Create(string connectionString)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<WideWorldContext>();
+            optionsBuilder.UseSqlServer(connectionString);
+
+            var context = new WideWorldContext(optionsBuilder.Options);
+            context.Database.EnsureCreated();
+
+            return context;
+        }
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
