@@ -1,0 +1,17 @@
+@model IEnumerable<HelloKube.core.dal.Orders>
+<h2>This data comes from the database</h2>
+<table>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Customer.CustomerName)
+            </td>
+        </tr>
+}
+</table>

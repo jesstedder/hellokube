@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="MassTransit.RabbitMQ" Version="4.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.0-preview1-final" />
+    <PackageReference Include="Stackexchange.Redis" Version="1.2.6" />
   </ItemGroup>
 
   <ItemGroup>

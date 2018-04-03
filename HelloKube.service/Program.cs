@@ -12,7 +12,9 @@ namespace HelloKube.service
     {
         // AutoResetEvent to signal when to exit the application.
         private static readonly AutoResetEvent waitHandle = new AutoResetEvent(false);
+        //NOTE:  This is a hack - these two "services" should be injected rather than referenced statically
         public static IBusControl _bus;
+        public static IConfiguration Configuration;
         //private static BackgroundJobServer _jobServer;
         static void Main(string[] args)
         {
@@ -23,11 +25,11 @@ namespace HelloKube.service
         .AddJsonFile("appsettings.json", optional: true)
         .AddJsonFile("config/externalsettings.json", optional: false);
 
-            var Configuration = builder.Build();
+            Configuration = builder.Build();
             Console.WriteLine($"Connecting to: {Configuration["RabbitMQ:Uri"]}");
-                GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration["SqlServer:ConnectionString"]);
+            GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration["SqlServer:ConnectionString"]);
             BackgroundJobServer _jobServer = new BackgroundJobServer();
-            
+
             // Fire and forget
             Task.Run(() =>
             {
@@ -44,11 +46,15 @@ namespace HelloKube.service
 
                 _bus.Start();
 
+                var redisConnString = Configuration["Redis:ConnectionString"];
+                HelloKube.core.services.CacheService.ConnectionString = redisConnString;
+
+
                 jobs.ServerTimeJob stj = new jobs.ServerTimeJob();
                 RecurringJob.AddOrUpdate("rmq-sample-job", () => stj.Execute(), Cron.Minutely, TimeZoneInfo.Local);
-                //_jobServer = new BackgroundJobServer();
 
-                
+                jobs.CacheCountryListJob cclj = new jobs.CacheCountryListJob();
+                RecurringJob.AddOrUpdate("cache-country-list-job", ()=>cclj.Execute(), Cron.MinuteInterval(5));
 
 
             });

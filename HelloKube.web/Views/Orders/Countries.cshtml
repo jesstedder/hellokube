@@ -1,0 +1,14 @@
+@model IEnumerable<HelloKube.core.dal.Countries>
+<h2>This data comes from the redis cache</h2>
+<table>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CountryName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Continent)
+            </td>
+        </tr>
+}
+</table>

@@ -1,0 +1,37 @@
+apiVersion: apps/v1beta1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: hello-kube-redis-deployment
+spec:
+  selector:
+    matchLabels:
+      app: hello-kube-redis
+  template: # create pods using pod definition in this template
+    metadata:
+      # unlike pod-nginx.yaml, the name is not included in the meta data as a unique name is
+      # generated from the deployment name
+      labels:
+        app: hello-kube-redis
+    spec:
+      containers:
+      - name: hello-kube-redis
+        image: bitnami/redis:latest
+        ports:
+        - name: redis
+          containerPort: 6379
+          protocol: TCP
+---        
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-kube-redis-svc
+spec:
+  ports:
+  - name: redis
+    protocol: TCP
+    port: 6379
+    targetPort: redis
+  selector:
+    app: hello-kube-redis
+  type: ClusterIP
+  sessionAffinity: None
