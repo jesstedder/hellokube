@@ -7,7 +7,7 @@ data:
   externalsettings.json: "{
     \ 'RabbitMQ':{'Uri':'rabbitmq://hello-kube-rabbitmq-lb.hello-kube.svc.cluster.local','UserName':'user','Password':'bitnami','EndpointQueue':'hello-kube-web'},
     \ 'Redis':{'ConnectionString':'hello-kube-redis-svc.hello-kube.svc.cluster.local,password=Passw0rd' },
-    \ 'SqlServer':{'ConnectionString':'Server=hk-sql-deployment.hello-kube.svc.cluster.local;Database=WideWorldImporters;User Id=sa;Password=c6en%YUpHawa;'  },
+    \ 'SqlServer':{'ConnectionString':'Server=hk-sql-server.hello-kube.svc.cluster.local;Database=WideWorldImporters;User Id=sa;Password=c6en%YUpHawa;'  },
     \ 'AzureAd': {'Instance': 'https://login.microsoftonline.com/','Domain': 'snp.fhlbc.in','TenantId': 'e510a899-523d-465f-bc91-8d2ea564984f','ClientId': '4f98a47a-96a0-4e86-bbfc-2e8c43e288d3','CallbackPath': '/signin-oidc'}
     \ }"
 
