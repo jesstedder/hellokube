@@ -22,6 +22,8 @@ spec:
       containers:
         - name: hello-kube-web
           image: snpcontainers2.azurecr.io/hello-kube-web:latest
+          imagePullSecrets:
+          - name: acs-secret          
           ports:
           - name: app
             containerPort: 5000
@@ -69,10 +71,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - hello-kube.k8s.snp.fhlbc.in
+    - hello-kube.gc.snp.fhlbc.in
     secretName: hello-kube-web-k8s-tls-cert2
   rules:
-  - host: hello-kube.k8s.snp.fhlbc.in
+  - host: hello-kube.gc.snp.fhlbc.in
     http:
       paths:
       - path: "/"
