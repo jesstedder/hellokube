@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: hello-kube-web
-  replicas: 1
+  replicas: 2
   strategy:
     rollingUpdate:
       maxSurge: 3
