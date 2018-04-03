@@ -23,3 +23,15 @@ kubectl exec hk-sql-deployment-65b58d7bd4-mrjld -n hello-kube -- bash -c "mkdir 
 # copy the backup file
 kubectl cp ./WideWorldImporters-Full.bak  hk-sql-deployment-65b58d7bd4-mrjld:/var/opt/mssql/backup/ -n hello-kube
 ```
+
+# Configuring the secure ingress stuff
+https://docs.bitnami.com/kubernetes/how-to/secure-kubernetes-services-with-ingress-tls-letsencrypt/
+
+
+# 502 errors with nginx ingress and azure ad authentication
+https://andrewlock.net/fixing-nginx-upstream-sent-too-big-header-error-when-running-an-ingress-controller-in-kubernetes/
+
+Add this to the ingress controller config map:
+```
+proxy-buffer-size: "16k"
+```
