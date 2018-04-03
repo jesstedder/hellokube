@@ -57,7 +57,7 @@ namespace HelloKube
             HelloKube.core.services.CacheService.ConnectionString = Configuration["Redis:ConnectionString"];
 
             services.AddTransient<core.services.OrderDataService>();
-            
+
             //var provider = services.BuildServiceProvider();
 
             
@@ -76,7 +76,7 @@ namespace HelloKube
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
 

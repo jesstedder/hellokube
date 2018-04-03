@@ -20,6 +20,9 @@ spec:
         - name: redis
           containerPort: 6379
           protocol: TCP
+        env:
+        - name: REDIS_PASSWORD
+          value: "Passw0rd"
 ---        
 apiVersion: v1
 kind: Service

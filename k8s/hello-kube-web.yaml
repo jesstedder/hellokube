@@ -1,4 +1,54 @@
+apiVersion: apps/v1beta1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: hello-kube-web-deployment
+  namespace: hello-kube
+spec:
+  selector:
+    matchLabels:
+      app: hello-kube-web
+  template: # create pods using pod definition in this template
+    metadata:
+      # unlike pod-nginx.yaml, the name is not included in the meta data as a unique name is
+      # generated from the deployment name
+      labels:
+        app: hello-kube-web
+    spec:
+      containers:
+        - name: hello-kube-web
+          image: snpcontainers2.azurecr.io/hello-kube-web:latest
+          ports:
+          - name: app
+            containerPort: 5000
+            protocol: TCP
+          env:
+          - name: ASPNETCORE_URLS
+            value: "http://*:5000"
+          volumeMounts:
+          - name: config-volume
+            mountPath: /config
+      volumes:
+        - name: config-volume
+          configMap:
+            # Provide the name of the ConfigMap containing the files you want
+            # to add to the container
+            name: hello-kube-config
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-kube-web-lb
+spec:
+  ports:
+  - name: app
+    protocol: TCP
+    port: 5000
+    targetPort: app
+  selector:
+    app: hello-kube-web
+  type: LoadBalancer
+  sessionAffinity: None
+
 ---
 kind: Ingress
 apiVersion: extensions/v1beta1

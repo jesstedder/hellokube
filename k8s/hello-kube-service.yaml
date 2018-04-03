@@ -4,9 +4,12 @@ metadata:
   name: hello-kube-config
   namespace: hello-kube
 data:
-  externalsettings.json: "{\r\n    \"RabbitMQ\":{\r\n    \"Uri\":\"rabbitmq://hello-kube-rabbitmq-lb.hello-kube.svc.cluster.local\",\r\n
-    \   \"UserName\":\"user\",\r\n    \"Password\":\"bitnami\",\r\n    \"EndpointQueue\":\"hello-kube-web\"\r\n
-    \ }\r\n}"
+  externalsettings.json: "{
+    \ 'RabbitMQ':{'Uri':'rabbitmq://hello-kube-rabbitmq-lb.hello-kube.svc.cluster.local','UserName':'user','Password':'bitnami','EndpointQueue':'hello-kube-web'},
+    \ 'Redis':{'ConnectionString':'hello-kube-redis-svc.hello-kube.svc.cluster.local,password=Passw0rd' },
+    \ 'SqlServer':{'ConnectionString':'Server=hk-sql-server.hello-kube.svc.cluster.local;Database=WideWorldImporters;User Id=sa;Password=c6en%YUpHawa;'  },
+    \ 'AzureAd': {'Instance': 'https://login.microsoftonline.com/','Domain': 'snp.fhlbc.in','TenantId': 'e510a899-523d-465f-bc91-8d2ea564984f','ClientId': '4f98a47a-96a0-4e86-bbfc-2e8c43e288d3','CallbackPath': '/signin-oidc'}
+    \ }"
 
     #hello-kube-rabbitmq-rabbitmq.hello-kube.svc.cluster.local
     #helm install --name hello-kube-rabbitmq --namespace hello-kube --set rabbitmqPassword=Passw0rd stable/rabbitmq

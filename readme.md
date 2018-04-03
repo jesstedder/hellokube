@@ -1,6 +1,9 @@
 # Running the container locally with config volume
 ```ps
-docker run --rm -v d:/src/Sandbox/HelloKube/HelloKube.service/config/:/config hello-kube-service
+docker run -v d:/src/Sandbox/HelloKube/externalconfig/:/config hello-kube-service
+
+$ docker run --name hello-kube-web -p 5000:5000 -e ASPNETCORE_URLS="http://*:5000" -v d:/src/Sandbox/HelloKube/externalconfig/:/config snpcontainers2.az urecr.io/hello-kube-web
+
 ```
 # Startup sql server
 ```ps
