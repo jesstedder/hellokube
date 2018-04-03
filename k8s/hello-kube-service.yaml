@@ -38,11 +38,12 @@ spec:
       containers:
         - name: hello-kube-service-console
           image: snpcontainers2.azurecr.io/hello-kube-service:latest
-          imagePullSecrets:
-          - name: acs-secret          
           volumeMounts:
           - name: config-volume
             mountPath: /config
+      imagePullSecrets:
+      - name: acs-secret          
+            
       volumes:
         - name: config-volume
           configMap:
