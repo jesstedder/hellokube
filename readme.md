@@ -22,6 +22,10 @@ kubectl exec hk-sql-deployment-65b58d7bd4-mrjld -n hello-kube -- bash -c "mkdir 
 
 # copy the backup file
 kubectl cp ./WideWorldImporters-Full.bak  hk-sql-deployment-65b58d7bd4-mrjld:/var/opt/mssql/backup/ -n hello-kube
+
+kubectl cp ./wwi.bak  hk-sql-deployment-799c777cc7-v6rhh:/var/opt/mssql/backup/ -n hello-kube
+
+
 ```
 
 # Configuring the secure ingress stuff
