@@ -36,7 +36,6 @@ namespace HelloKube
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            /*
             services.AddAuthentication(sharedOptions =>
             {
                 sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -46,35 +45,38 @@ namespace HelloKube
                     Configuration.Bind("AzureAd", options);
                 } )
             .AddCookie();
-*/
-/* 
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
-*/
+
+            /* 
+                        services.Configure<CookiePolicyOptions>(options =>
+                        {
+                            // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                            options.CheckConsentNeeded = context => true;
+                            options.MinimumSameSitePolicy = SameSiteMode.None;
+                        });
+            */
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddDbContext<core.dal.WideWorldContext>(options=>options.UseSqlServer(Configuration["SqlServer:ConnectionString"]));
-            
+            services.AddDbContext<core.dal.WideWorldContext>(options => options.UseSqlServer(Configuration["SqlServer:ConnectionString"]));
+
             var x = services.AddSignalR();
             HelloKube.core.services.CacheService.ConnectionString = Configuration["Redis:ConnectionString"];
 
             services.AddTransient<core.services.OrderDataService>();
 
-            //var provider = services.BuildServiceProvider();
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+                //NOTE:  I had to add these two lines to get the forwarded headers to work, i think ideally you would add the known proxies (ingress controller) addresses or network
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+            });
 
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime)
         {
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
-});
+            app.UseForwardedHeaders();
 
 
             if (env.IsDevelopment())
@@ -90,7 +92,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            //app.UseAuthentication();
+            app.UseAuthentication();
 
             app.UseSignalR(routes =>
             {
@@ -103,7 +105,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-        //NOTE:  This is a hack, need to figure out how to inject the SignalR context into the MassTransit consumer
+            //NOTE:  This is a hack, need to figure out how to inject the SignalR context into the MassTransit consumer
             NotificationHubContext = app.ApplicationServices.GetService<IHubContext<Hubs.NotificationHub>>();
 
 
@@ -117,7 +119,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 
                 sbc.ReceiveEndpoint(host, Configuration["RabbitMQ:EndpointQueue"], endpoint =>
                     {
-                        
+
                         endpoint.Consumer<HelloKube.Hubs.ServerTimeConsumer>();
                     });
             });
@@ -127,7 +129,8 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 
         }
 
-        private void OnStopping(){
+        private void OnStopping()
+        {
             _bus.Stop();
         }
     }
