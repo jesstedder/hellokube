@@ -38,6 +38,7 @@ spec:
       containers:
         - name: hello-kube-service-console
           image: snpcontainers2.azurecr.io/hello-kube-service:latest
+          imagePullPolicy: Always
           volumeMounts:
           - name: config-volume
             mountPath: /config
