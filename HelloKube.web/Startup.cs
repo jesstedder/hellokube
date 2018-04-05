@@ -36,6 +36,17 @@ namespace HelloKube
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+/*
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+                //NOTE:  I had to add these two lines to get the forwarded headers to work, i think ideally you would add the known proxies (ingress controller) addresses or network
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+            });
+*/            
+/*
             services.AddAuthentication(sharedOptions =>
             {
                 sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -45,7 +56,7 @@ namespace HelloKube
                     Configuration.Bind("AzureAd", options);
                 } )
             .AddCookie();
-
+*/
             /* 
                         services.Configure<CookiePolicyOptions>(options =>
                         {
@@ -62,21 +73,17 @@ namespace HelloKube
 
             services.AddTransient<core.services.OrderDataService>();
 
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
-                //NOTE:  I had to add these two lines to get the forwarded headers to work, i think ideally you would add the known proxies (ingress controller) addresses or network
-                options.KnownNetworks.Clear();
-                options.KnownProxies.Clear();
-            });
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime)
         {
-            app.UseForwardedHeaders();
+            //app.UseForwardedHeaders();
+            app.Use((context, next)=>{
+                context.Request.Scheme = "https";
+                return next();
+            });
 
 
             if (env.IsDevelopment())

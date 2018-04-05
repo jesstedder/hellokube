@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace HelloKube.Hubs
 {
-    [Authorize]
+    //[Authorize]
     public class NotificationHub : Hub
     {
 
