@@ -9,7 +9,7 @@ using HelloKube.Models;
 
 namespace HelloKube.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class HomeController : Controller
     {
         public IActionResult Index()

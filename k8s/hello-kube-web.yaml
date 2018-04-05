@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: hello-kube-web
-          image: snpcontainers2.azurecr.io/hello-kube-web:1.0.0
+          image: snpcontainers2.azurecr.io/hello-kube-web:noauth
           ports:
           - name: app
             containerPort: 5000
