@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -40,7 +41,9 @@ namespace HelloKube
                 sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 sharedOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
             })
-                .AddAzureAd(options => Configuration.Bind("AzureAd", options))
+                .AddAzureAd(options =>{
+                    Configuration.Bind("AzureAd", options);
+                } )
             .AddCookie();
 
             services.Configure<CookiePolicyOptions>(options =>
@@ -66,6 +69,12 @@ namespace HelloKube
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime)
         {
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -75,7 +84,6 @@ namespace HelloKube
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-
             //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
