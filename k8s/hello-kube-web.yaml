@@ -73,10 +73,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - hello-kube.gc.snp.fhlbc.in
+    - hello-kube.k8s.snp.fhlbc.in
     secretName: hello-kube-web-k8s-tls-cert2
   rules:
-  - host: hello-kube.gc.snp.fhlbc.in
+  - host: hello-kube.k8s.snp.fhlbc.in
     http:
       paths:
       - path: "/"
