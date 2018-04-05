@@ -14,6 +14,15 @@ namespace HelloKube.Controllers
     {
         public IActionResult Index()
         {
+            ViewData["RemoteIpAddress"] = HttpContext.Connection.RemoteIpAddress.ToString();
+            ViewData["RequestScheme"] = HttpContext.Request.Scheme;
+            ViewData["RequestHost"] = HttpContext.Request.Host;
+            ViewData["X-Forwarded-For"] = HttpContext.Request.Headers["X-Forwarded-For"];
+            ViewData["X-Forwarded-Proto"] = HttpContext.Request.Headers["X-Forwarded-Proto"];
+            ViewData["X-Forwarded-Host"] = HttpContext.Request.Headers["X-Forwarded-Host"];
+            
+
+            
             return View();
         }
 
@@ -35,6 +44,7 @@ namespace HelloKube.Controllers
         {
             return View();
         }
+
 
         [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
