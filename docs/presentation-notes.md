@@ -40,6 +40,7 @@
         * spin up the other two and show them
         * Goto prime
         * In addition to saying hello world, it can also calculate primes, we'll use this to demonstrate auto scaling under load
+        * Demonstrate deleting the pod and seeing it be recreated
     * SLIDE:  Library pic from cincinnati
     * Container registries are simply libraries of container images.  If you are familiar with it, this is similar to the file share on build1 where all of the spadefoot packages live.
     * SLIDE:  Cincinnati Symphony orchestra
