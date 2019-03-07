@@ -43,7 +43,7 @@ spec:
           - name: config-volume
             mountPath: /config
       imagePullSecrets:
-      - name: acs-secret          
+      - name: acr-auth          
             
       volumes:
         - name: config-volume
